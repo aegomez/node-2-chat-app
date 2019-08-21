@@ -1,6 +1,6 @@
-const expect = require('expect');
+import expect = require('expect');
 
-const { generateMessage } = require('./message');
+import { generateMessage } from './message';
 
 describe('generateMessage', () => {
   it('should generate correct message object', () => {

@@ -1,16 +1,19 @@
 // library imports
-const path = require('path');
+import http = require('http');
+import path = require('path');
 
-// Setup Socket.IO + Express
-const express = require('express');
-const app = express();
-const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+import express = require( 'express');
+import socketIO = require ('socket.io');
 
 // local imports
-const { generateMessage } = require('./utils/message');
+import { generateMessage } from './utils/message';
 
-const port = process.env.PORT || 9000;
+// Setup Socket.IO + Express
+const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
+
+const port = process.env.PORT || '9000';
 const publicPath = path.join(__dirname, '../public');
 
 // static middleware
