@@ -3,7 +3,8 @@
   "version": "0.2.0",
   "description": "Example web app with Socket.io",
   "scripts": {
-    "prestart": "node copyStaticAssets.js",
+    "build": "tsc && npm run copy-static",
+    "copy-static": "node copyStaticAssets.js",
     "start": "node dist/server/server.js",
     "test": "mocha dist/server/**/*.test.js",
     "test-watch": "nodemon --exec \"npm test\""
