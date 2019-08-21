@@ -4,7 +4,4 @@ declare namespace chatApp {
     text: string,
     date: number
   };
-
-  type generateMessage = (from: string, text: string) => Message;
 }
-

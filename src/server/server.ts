@@ -26,9 +26,10 @@ io.on('connection', socket => {
 
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'A new user appeared!'));
 
-  socket.on('createMessage', message => {
+  socket.on('createMessage', (message: chatApp.Message, callback: (data: string) => void) => {
     console.log('createMessage', message);
     io.emit('newMessage', generateMessage(message.from, message.text));
+    callback('Ack from the server.');
   });
 
   socket.on('disconnect', socket => {
