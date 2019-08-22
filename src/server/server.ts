@@ -6,7 +6,7 @@ import express = require( 'express');
 import socketIO = require ('socket.io');
 
 // local imports
-import { generateMessage } from './utils/message';
+import { generateMessage, generateLocationMessage } from './utils/message';
 
 // Setup Socket.IO + Express
 const app = express();
@@ -30,6 +30,10 @@ io.on('connection', socket => {
     console.log('createMessage', message);
     io.emit('newMessage', generateMessage(message.from, message.text));
     callback('Ack from the server.');
+  });
+
+  socket.on('createLocationMessage', (coords: chatApp.Location) => {
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coords));
   });
 
   socket.on('disconnect', socket => {

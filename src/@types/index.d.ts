@@ -1,7 +1,21 @@
 declare namespace chatApp {
-  type Message = {
+  interface Message {
     from: string,
-    text: string,
+    text: string
+  }
+
+  interface DatedMessage extends Message {
     date: number
-  };
+  }
+
+  interface Location {
+    latitude: number,
+    longitude: number
+  }
+
+  interface LocationMessage {
+    from: string,
+    url: string,
+    date: number
+  }
 }
