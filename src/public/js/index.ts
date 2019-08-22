@@ -32,13 +32,15 @@ socket.on('newLocationMessage', function(message: chatApp.LocationMessage) {
 $('#message-form').addEventListener('submit', function(event) {
   event.preventDefault();
 
+  var messageTextbox = $('[name=message]') as HTMLInputElement;
+
   var message: chatApp.Message = {
     from: 'Anon',
-    text: ($('[name=message]') as HTMLInputElement).value
+    text: messageTextbox.value
   };
 
-  socket.emit('createMessage', message, function(data: string) {
-    console.log('Got it', data);
+  socket.emit('createMessage', message, function() {
+    messageTextbox.value = '';
   });
 });
 
@@ -48,6 +50,10 @@ locationButton.addEventListener('click', function() {
   if (!navigator.geolocation) {
     return alert('Geolocation not supported by your browser.');
   }
+
+  locationButton.setAttribute('disabled', 'disabled');
+  locationButton.textContent = 'Sending location...';
+
   navigator.geolocation.getCurrentPosition(
     function success(position) {
       var location: chatApp.Location = {
@@ -55,8 +61,12 @@ locationButton.addEventListener('click', function() {
         longitude: position.coords.longitude
       };
       socket.emit('createLocationMessage', location);
+      locationButton.removeAttribute('disabled');
+      locationButton.textContent = 'Share my location';
     },
     function error() {
+      locationButton.removeAttribute('disabled');
+      locationButton.textContent = 'Share my location';
       alert('Unable to fetch location.');
     }
   );

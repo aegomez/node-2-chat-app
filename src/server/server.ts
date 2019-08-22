@@ -26,10 +26,10 @@ io.on('connection', socket => {
 
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'A new user appeared!'));
 
-  socket.on('createMessage', (message: chatApp.Message, callback: (data: string) => void) => {
+  socket.on('createMessage', (message: chatApp.Message, callback: () => void) => {
     console.log('createMessage', message);
     io.emit('newMessage', generateMessage(message.from, message.text));
-    callback('Ack from the server.');
+    callback();
   });
 
   socket.on('createLocationMessage', (coords: chatApp.Location) => {
