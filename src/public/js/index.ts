@@ -10,24 +10,24 @@ socket.on('disconnect', function() {
 
 socket.on('newMessage', function(message: chatApp.DatedMessage) {
   var time = moment(message.date).format('h:mm a');
-  
-  var li = document.createElement('li');
-  li.textContent = message.from + ' ' + time + ': ' + message.text;
-  $('#message-list').appendChild(li);
+  var template = $('#message-template').innerHTML;
+  var html = Mustache.render(template, {
+    from: message.from,
+    text: message.text,
+    time: time
+  });
+  $('#message-list').innerHTML += html;
 });
 
 socket.on('newLocationMessage', function(message: chatApp.LocationMessage) {
   var time = moment(message.date).format('h:mm a');
-  var li = document.createElement('li');
-  var a = document.createElement('a');
-
-  li.textContent = (message.from + ' ' + time + ': ');
-  a.textContent = 'My current location';
-  a.setAttribute('href', message.url);
-  a.setAttribute('target', '_blank');
-  
-  li.appendChild(a);
-  $('#message-list').appendChild(li);
+  var template = $('#location-message-template').innerHTML;
+  var html = Mustache.render(template, {
+    from: message.from,
+    url: message.url,
+    time: time
+  });
+  $('#message-list').innerHTML += html;
 });
 
 $('#message-form').addEventListener('submit', function(event) {
