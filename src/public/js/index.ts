@@ -9,18 +9,19 @@ socket.on('disconnect', function() {
 });
 
 socket.on('newMessage', function(message: chatApp.DatedMessage) {
-  console.log('New message:', message);
+  var time = moment(message.date).format('h:mm a');
   
   var li = document.createElement('li');
-  li.textContent = message.from + ': ' + message.text;
+  li.textContent = message.from + ' ' + time + ': ' + message.text;
   $('#message-list').appendChild(li);
 });
 
 socket.on('newLocationMessage', function(message: chatApp.LocationMessage) {
+  var time = moment(message.date).format('h:mm a');
   var li = document.createElement('li');
   var a = document.createElement('a');
 
-  li.textContent = (message.from + ': ');
+  li.textContent = (message.from + ' ' + time + ': ');
   a.textContent = 'My current location';
   a.setAttribute('href', message.url);
   a.setAttribute('target', '_blank');
