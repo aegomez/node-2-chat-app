@@ -1,5 +1,20 @@
 var socket = io();
 
+function scrollToBottom() {
+  var messages = $("#message-list");
+  var newMessage = messages.lastElementChild as Element;
+  
+  var clientHeight = messages.clientHeight;
+  var scrollTop = messages.scrollTop;
+  var scrollHeight = messages.scrollHeight;
+  var newMessageHeight = newMessage.clientHeight;
+  var lastMessageHeight = newMessage.previousElementSibling ? newMessage.previousElementSibling.clientHeight : 0;
+
+  if ((clientHeight + scrollTop + newMessageHeight + lastMessageHeight) >= scrollHeight) {
+    messages.scrollTop = scrollHeight;
+  }
+}
+
 socket.on('connect', function() {
   console.log('Connected to server');
 });
@@ -17,6 +32,7 @@ socket.on('newMessage', function(message: chatApp.DatedMessage) {
     time: time
   });
   $('#message-list').innerHTML += html;
+  scrollToBottom();
 });
 
 socket.on('newLocationMessage', function(message: chatApp.LocationMessage) {
@@ -28,6 +44,7 @@ socket.on('newLocationMessage', function(message: chatApp.LocationMessage) {
     time: time
   });
   $('#message-list').innerHTML += html;
+  scrollToBottom();
 });
 
 $('#message-form').addEventListener('submit', function(event) {
