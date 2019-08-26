@@ -18,4 +18,15 @@ declare namespace chatApp {
     url: string,
     date: number
   }
+
+  interface SearchParams {
+    name: string,
+    room: string
+  }
+
+  interface User {
+    id: string,
+    name: string,
+    room: string
+  }
 }

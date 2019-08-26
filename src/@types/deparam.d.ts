@@ -1,0 +1,1 @@
+declare function deparam(uri?: string): any;

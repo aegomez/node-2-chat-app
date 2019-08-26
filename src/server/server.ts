@@ -7,6 +7,7 @@ import socketIO = require ('socket.io');
 
 // local imports
 import { generateMessage, generateLocationMessage } from './utils/message';
+import { isRealString } from './utils/validation';
 
 // Setup Socket.IO + Express
 const app = express();
@@ -21,10 +22,17 @@ app.use(express.static(publicPath));
 
 io.on('connection', socket => {
   console.log('New user connected');
-  
-  socket.emit('newMessage', generateMessage('Admin', 'The Admin welcomes you to the chat app'));
 
-  socket.broadcast.emit('newMessage', generateMessage('Admin', 'A new user appeared!'));
+  socket.on('join', (params: chatApp.SearchParams, callback: (err?: string) => void) => {
+    if(!isRealString(params.name) || !isRealString(params.room)) {
+      callback('Name and room name are required');
+    }
+    socket.join(params.room);
+    callback();
+    
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
+  });
 
   socket.on('createMessage', (message: chatApp.Message, callback: () => void) => {
     console.log('createMessage', message);
