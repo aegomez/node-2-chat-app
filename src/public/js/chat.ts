@@ -28,7 +28,7 @@ socket.on('updateUserList', function(users: string[]) {
   $('#users').appendChild(ol);
 });
 
-socket.on('newMessage', function(message: chatApp.DatedMessage) {
+socket.on('newMessage', function(message: chatApp.ServerMessage) {
   var time = moment(message.date).format('h:mm a');
   var template = $('#message-template').innerHTML;
   var html = Mustache.render(template, {
@@ -57,8 +57,7 @@ $('#message-form').addEventListener('submit', function(event) {
 
   var messageTextbox = $('[name=message]') as HTMLInputElement;
 
-  var message: chatApp.Message = {
-    from: 'Anon',
+  var message: chatApp.ClientMessage = {
     text: messageTextbox.value
   };
 

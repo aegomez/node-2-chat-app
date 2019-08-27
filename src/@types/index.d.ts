@@ -1,10 +1,10 @@
 declare namespace chatApp {
-  interface Message {
-    from: string,
+  interface ClientMessage {
     text: string
   }
 
-  interface DatedMessage extends Message {
+  interface ServerMessage extends ClientMessage {
+    from: string,
     date: number
   }
 

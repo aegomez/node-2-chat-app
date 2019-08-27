@@ -1,6 +1,6 @@
 import moment = require('moment');
 
-const generateMessage = (from: string, text: string): chatApp.DatedMessage => ({
+const generateMessage = (from: string, text: string): chatApp.ServerMessage => ({
   from,
   text,
   date: moment().valueOf()

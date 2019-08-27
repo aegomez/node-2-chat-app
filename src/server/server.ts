@@ -42,9 +42,11 @@ io.on('connection', socket => {
     socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
   });
 
-  socket.on('createMessage', (message: chatApp.Message, callback: () => void) => {
-    console.log('createMessage', message);
-    io.emit('newMessage', generateMessage(message.from, message.text));
+  socket.on('createMessage', (message: chatApp.ClientMessage, callback: () => void) => {
+    let user = users.getUser(socket.id);
+    if (user && isRealString(message.text)) {
+      io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+    }
     callback();
   });
 
