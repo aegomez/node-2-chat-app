@@ -51,7 +51,10 @@ io.on('connection', socket => {
   });
 
   socket.on('createLocationMessage', (coords: chatApp.Location) => {
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords));
+    let user = users.getUser(socket.id);
+    if (user) {
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords));
+    }
   });
 
   socket.on('disconnect', () => {
