@@ -8,6 +8,7 @@ import socketIO = require ('socket.io');
 // local imports
 import { generateMessage, generateLocationMessage } from './utils/message';
 import { isRealString } from './utils/validation';
+import { Users } from './utils/users';
 
 // Setup Socket.IO + Express
 const app = express();
@@ -17,6 +18,8 @@ const io = socketIO(server);
 const port = process.env.PORT || '9000';
 const publicPath = path.join(__dirname, '../public');
 
+const users = new Users();
+
 // static middleware
 app.use(express.static(publicPath));
 
@@ -25,11 +28,16 @@ io.on('connection', socket => {
 
   socket.on('join', (params: chatApp.SearchParams, callback: (err?: string) => void) => {
     if(!isRealString(params.name) || !isRealString(params.room)) {
-      callback('Name and room name are required');
+      return callback('Name and room name are required');
     }
-    socket.join(params.room);
     callback();
-    
+
+    socket.join(params.room);
+    users.removeUser(socket.id);
+    users.addUser(socket.id, params.name, params.room);
+
+    io.to(params.room).emit('updateUserList', users.getUserList(params.room));
+
     socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
     socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
   });
@@ -44,8 +52,12 @@ io.on('connection', socket => {
     io.emit('newLocationMessage', generateLocationMessage('Admin', coords));
   });
 
-  socket.on('disconnect', socket => {
-    console.log('User was disconnected');
+  socket.on('disconnect', () => {
+    let user = users.removeUser(socket.id);
+    if (user) {
+      io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+      io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left.`));
+    }
   });
 });
 

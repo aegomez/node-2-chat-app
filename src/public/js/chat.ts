@@ -1,20 +1,5 @@
 var socket = io();
 
-function scrollToBottom() {
-  var messages = $("#message-list");
-  var newMessage = messages.lastElementChild as Element;
-  
-  var clientHeight = messages.clientHeight;
-  var scrollTop = messages.scrollTop;
-  var scrollHeight = messages.scrollHeight;
-  var newMessageHeight = newMessage.clientHeight;
-  var lastMessageHeight = newMessage.previousElementSibling ? newMessage.previousElementSibling.clientHeight : 0;
-
-  if ((clientHeight + scrollTop + newMessageHeight + lastMessageHeight) >= scrollHeight) {
-    messages.scrollTop = scrollHeight;
-  }
-}
-
 socket.on('connect', function() {
   var params: chatApp.SearchParams = deparam(window.location.search);
   socket.emit('join', params, function(err?: string) {
@@ -32,6 +17,17 @@ socket.on('disconnect', function() {
   console.log('Disconnected from server');
 });
 
+socket.on('updateUserList', function(users: string[]) {
+  var ol = document.createElement('ol');
+  users.forEach(function(user) {
+    var li = document.createElement('li');
+    li.textContent = user;
+    ol.appendChild(li);
+  });
+  $('#users').innerHTML = '';
+  $('#users').appendChild(ol);
+});
+
 socket.on('newMessage', function(message: chatApp.DatedMessage) {
   var time = moment(message.date).format('h:mm a');
   var template = $('#message-template').innerHTML;
@@ -40,7 +36,7 @@ socket.on('newMessage', function(message: chatApp.DatedMessage) {
     text: message.text,
     time: time
   });
-  $('#message-list').innerHTML += html;
+  $('#message-list').insertAdjacentHTML('beforeend', html);
   scrollToBottom();
 });
 
@@ -52,7 +48,7 @@ socket.on('newLocationMessage', function(message: chatApp.LocationMessage) {
     url: message.url,
     time: time
   });
-  $('#message-list').innerHTML += html;
+  $('#message-list').insertAdjacentHTML('beforeend', html);
   scrollToBottom();
 });
 
